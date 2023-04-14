@@ -1,4 +1,4 @@
-# Passport Authentication with Cookies and Sessions
+# OAuth 2.0
 Website: https://OAuth-fr.onrender.com
 
 OAuth Authentication
