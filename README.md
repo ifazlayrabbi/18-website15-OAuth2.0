@@ -1,5 +1,5 @@
 # OAuth 2.0
-Website: https://OAuth-fr.onrender.com
+Website: https://share-my-secrets.onrender.com
 
 OAuth Authentication
 ---------------------------
