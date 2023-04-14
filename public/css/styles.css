@@ -1,0 +1,35 @@
+
+body {
+  background-color: #E8ECEF;
+}
+
+.centered {
+    padding-top: 200px;
+    text-align: center;
+}
+
+.secret-text {
+  text-align: center;
+  font-size: 2rem;
+  color: #fff;
+  background-color: #000;
+}
+
+.form-inline {
+  display: inline;
+  text-align: center;
+}
+
+hr {
+  border: 1px solid transparent;
+  height: 0px;
+}
+
+.padding {
+  padding: 7% 15%;
+}
+
+.center {
+  text-align: center;
+  padding-bottom: 7%;
+}
