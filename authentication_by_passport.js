@@ -9,8 +9,22 @@ const LocalStrategy = require('passport-local')
 exports.passport_authentication = (passport, User) => {
   
   passport.use(new LocalStrategy({usernameField: 'email'}, User.authenticate()))
-  passport.serializeUser (User.serializeUser())
-  passport.deserializeUser (User.deserializeUser())
+  
+  passport.serializeUser(function(user, cb) {
+    process.nextTick(function() {
+      return cb(null, {
+        id: user.id,
+        username: user.username,
+        picture: user.picture
+      });
+    });
+  });
+  
+  passport.deserializeUser(function(user, cb) {
+    process.nextTick(function() {
+      return cb(null, user);
+    });
+  });
 
 }
 
@@ -18,7 +32,7 @@ exports.passport_authentication = (passport, User) => {
 
 
 
-// exports.login_by_passport = (passport, getUserByEmail, getUserById) => {
+// exports.passport_authentication = (passport, getUserByEmail, getUserById) => {
   
 //   passport.use(new LocalStrategy({usernameField: 'email'}, authenticateUser))
 //   passport.serializeUser ((user, done) => done(null, user._id))

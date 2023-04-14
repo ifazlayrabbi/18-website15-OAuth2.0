@@ -3,6 +3,7 @@ require('dotenv').config()
 const mongoose = require('mongoose')
 // const encrypt = require('mongoose-encryption')
 const passportLocalMongoose = require('passport-local-mongoose')
+const findOrCreate = require('mongoose-findorcreate')
 
   // username: {type: String, unique: true, require: true},
   // created: {type: Date, default: Date.now}
@@ -13,13 +14,20 @@ const passportLocalMongoose = require('passport-local-mongoose')
 
 
 
+
+
 mongoose.connect(process.env.CONNECT_DB)
 // mongoose.connect('mongodb://127.0.0.1:27017/passportDB')
 
-const userSchema = mongoose.Schema()
+const userSchema = mongoose.Schema({
+  username: {type: String, unique: true, require: true, index: true, sparse: true},
+  googleId: String,
+  created: {type: Date, default: Date.now}
+})
 
 // userSchema.plugin(encrypt, {secret: process.env.SECRET, encryptedFields: ['password']})
 userSchema.plugin(passportLocalMongoose)
+userSchema.plugin(findOrCreate)
 
 const User = mongoose.model('User', userSchema)
 exports.User = User

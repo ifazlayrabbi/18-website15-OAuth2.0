@@ -14,6 +14,8 @@ const _ = require('lodash')
 const methodOverride = require('method-override')
 app.use(methodOverride('_method'))
 
+const GoogleStrategy = require('passport-google-oauth20').Strategy
+
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
@@ -39,12 +41,41 @@ const {passport_authentication} = require('./authentication_by_passport')
 
 
 
+
+
+
 passport_authentication(passport, User)
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "http://127.0.0.1:3000/auth/google/share-my-secrets"
+ },
+function(accessToken, refreshToken, profile, cb) {
+  console.log(profile)
+  User.findOrCreate({ googleId: profile.id }, function (err, user) {
+    return cb(err, user);
+  });
+}
+));
+
+
+
 
 
 app.get('/', (req, res) => {
   res.render('home')
 })
+
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile'] })
+)
+
+app.get('/auth/google/share-my-secrets', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/secrets');
+  });
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
   res.render('register')
