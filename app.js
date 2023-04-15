@@ -16,6 +16,7 @@ app.use(methodOverride('_method'))
 
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 const FacebookStrategy = require('passport-facebook').Strategy
+const GitHubStrategy = require('passport-github2').Strategy
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -50,10 +51,9 @@ passport_authentication(passport, User)
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "https://share-my-secrets.onrender.com/auth/google/share-my-secrets"
+  callbackURL: "https://share-my-secrets.onrender.com/auth/google/secrets"
  },
 function(accessToken, refreshToken, profile, cb) {
-  console.log(profile)
   User.findOrCreate({ googleId: profile.id, name: profile.displayName }, function (err, user) {
     return cb(err, user);
   })
@@ -63,16 +63,26 @@ function(accessToken, refreshToken, profile, cb) {
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: "https://share-my-secrets.onrender.com/auth/facebook/share-my-secrets"
+  callbackURL: "https://share-my-secrets.onrender.com/auth/facebook/secrets"
 },
 function(accessToken, refreshToken, profile, cb) {
-  console.log(profile)
   User.findOrCreate({ facebookId: profile.id, name: profile.displayName }, function (err, user) {
     return cb(err, user)
   })
 }
 ))
 
+passport.use(new GitHubStrategy({
+  clientID: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  callbackURL: "https://share-my-secrets.onrender.com/auth/github/secrets"
+},
+function(accessToken, refreshToken, profile, done) {
+  User.findOrCreate({ githubId: profile.id, name: profile.displayName }, function (err, user) {
+    return done(err, user);
+  })
+}
+))
 
 
 
@@ -87,7 +97,7 @@ app.get('/auth/google',
   passport.authenticate('google', { scope: ['profile'] })
 )
 
-app.get('/auth/google/share-my-secrets', 
+app.get('/auth/google/secrets', 
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
     res.redirect('/secrets')
@@ -97,12 +107,20 @@ app.get('/auth/google/share-my-secrets',
 app.get('/auth/facebook',
   passport.authenticate('facebook'))
 
-app.get('/auth/facebook/share-my-secrets',
+app.get('/auth/facebook/secrets',
   passport.authenticate('facebook', { failureRedirect: '/login' }),
   function(req, res) {
     res.redirect('/secrets')
-  }
-)
+  })
+
+app.get('/auth/github',
+  passport.authenticate('github', { scope: [ 'user:email' ] }))
+
+app.get('/auth/github/secrets', 
+  passport.authenticate('github', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/secrets')
+  })
 
 
 

@@ -23,6 +23,7 @@ const userSchema = mongoose.Schema({
   username: {type: String, unique: true, require: true, index: true, sparse: true},
   googleId: String,
   facebookId: String,
+  githubId: String,
   name: String,
   created: {type: Date, default: Date.now}
 })
