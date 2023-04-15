@@ -50,7 +50,7 @@ passport_authentication(passport, User)
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "http://localhost:3000/auth/google/share-my-secrets"
+  callbackURL: "https://share-my-secrets/auth/google/share-my-secrets"
  },
 function(accessToken, refreshToken, profile, cb) {
   console.log(profile)
@@ -63,7 +63,7 @@ function(accessToken, refreshToken, profile, cb) {
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: "http://localhost:3000/auth/facebook/share-my-secrets"
+  callbackURL: "https://share-my-secrets/auth/facebook/share-my-secrets"
 },
 function(accessToken, refreshToken, profile, cb) {
   console.log(profile)
