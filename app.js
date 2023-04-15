@@ -15,6 +15,7 @@ const methodOverride = require('method-override')
 app.use(methodOverride('_method'))
 
 const GoogleStrategy = require('passport-google-oauth20').Strategy
+const TwitterStrategy = require('passport-twitter').Strategy
 const FacebookStrategy = require('passport-facebook').Strategy
 const GitHubStrategy = require('passport-github2').Strategy
 
@@ -60,6 +61,18 @@ function(accessToken, refreshToken, profile, cb) {
 }
 ))
 
+passport.use(new TwitterStrategy({
+  consumerKey: process.env.TWITTER_CLIENT_ID,
+  consumerSecret: process.env.TWITTER_CLIENT_SECRET,
+  callbackURL: "https://share-my-secrets.onrender.com/auth/twitter/secrets"
+},
+function(token, tokenSecret, profile, cb) {
+  User.findOrCreate({ twitterId: profile.id, name: profile.displayName }, function (err, user) {
+    return cb(err, user)
+  })
+}
+))
+
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
@@ -90,6 +103,7 @@ function(accessToken, refreshToken, profile, done) {
 
 
 
+
 app.get('/', (req, res) => {
   res.render('home')
 })
@@ -104,6 +118,15 @@ app.get('/auth/google/secrets',
     res.redirect('/secrets')
   }
 )
+
+app.get('/auth/twitter',
+  passport.authenticate('twitter'))
+
+app.get('/auth/twitter/secrets', 
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/secrets')
+  })
 
 app.get('/auth/facebook',
   passport.authenticate('facebook'))
