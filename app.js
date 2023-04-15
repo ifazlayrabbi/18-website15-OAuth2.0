@@ -78,6 +78,7 @@ passport.use(new GitHubStrategy({
   callbackURL: "https://share-my-secrets.onrender.com/auth/github/secrets"
 },
 function(accessToken, refreshToken, profile, done) {
+  console.log(profile)
   User.findOrCreate({ githubId: profile.id, name: profile.displayName }, function (err, user) {
     return done(err, user);
   })
