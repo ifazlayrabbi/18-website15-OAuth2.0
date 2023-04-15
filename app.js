@@ -62,8 +62,8 @@ function(accessToken, refreshToken, profile, cb) {
 ))
 
 passport.use(new TwitterStrategy({
-  consumerKey: process.env.TWITTER_CLIENT_ID,
-  consumerSecret: process.env.TWITTER_CLIENT_SECRET,
+  consumerKey: process.env.TWITTER_CONSUMER_KEY,
+  consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
   callbackURL: "https://share-my-secrets.onrender.com/auth/twitter/secrets"
 },
 function(token, tokenSecret, profile, cb) {
