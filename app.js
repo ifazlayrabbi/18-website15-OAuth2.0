@@ -55,6 +55,7 @@ passport.use(new GoogleStrategy({
   callbackURL: "https://share-my-secrets.onrender.com/auth/google/secrets"
  },
 function(accessToken, refreshToken, profile, cb) {
+  console.log(profile)
   User.findOrCreate({ googleId: profile.id, name: profile.displayName }, function (err, user) {
     return cb(err, user);
   })
@@ -67,6 +68,7 @@ passport.use(new TwitterStrategy({
   callbackURL: "https://share-my-secrets.onrender.com/auth/twitter/secrets"
 },
 function(token, tokenSecret, profile, cb) {
+  console.log(profile)
   User.findOrCreate({ twitterId: profile.id, name: profile.displayName }, function (err, user) {
     return cb(err, user)
   })
@@ -79,6 +81,7 @@ passport.use(new FacebookStrategy({
   callbackURL: "https://share-my-secrets.onrender.com/auth/facebook/secrets"
 },
 function(accessToken, refreshToken, profile, cb) {
+  console.log(profile)
   User.findOrCreate({ facebookId: profile.id, name: profile.displayName }, function (err, user) {
     return cb(err, user)
   })
@@ -92,7 +95,7 @@ passport.use(new GitHubStrategy({
 },
 function(accessToken, refreshToken, profile, done) {
   console.log(profile)
-  User.findOrCreate({ githubId: profile.id, name: profile.login }, function (err, user) {
+  User.findOrCreate({ githubId: profile.id, name: profile.username }, function (err, user) {
     return done(err, user);
   })
 }
