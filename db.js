@@ -22,8 +22,8 @@ mongoose.connect(process.env.CONNECT_DB)
 const userSchema = mongoose.Schema({
   username: {type: String, unique: true, require: true, index: true, sparse: true},
   googleId: String,
-  name: String,
   facebookId: String,
+  name: String,
   created: {type: Date, default: Date.now}
 })
 

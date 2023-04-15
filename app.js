@@ -67,7 +67,7 @@ passport.use(new FacebookStrategy({
 },
 function(accessToken, refreshToken, profile, cb) {
   console.log(profile)
-  User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+  User.findOrCreate({ facebookId: profile.id, name: profile.displayName }, function (err, user) {
     return cb(err, user)
   })
 }
