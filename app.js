@@ -79,7 +79,7 @@ passport.use(new GitHubStrategy({
 },
 function(accessToken, refreshToken, profile, done) {
   console.log(profile)
-  User.findOrCreate({ githubId: profile.id, name: profile.displayName }, function (err, user) {
+  User.findOrCreate({ githubId: profile.id, name: profile.login }, function (err, user) {
     return done(err, user);
   })
 }
