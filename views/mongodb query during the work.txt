@@ -1,0 +1,29 @@
+
+show collections;
+db.users.drop()
+
+//show dbs;
+use oauthDB;
+use passportDB;
+//show collections;
+
+db.users.find()
+db.users.getIndexes()
+db.users.drop()
+
+db.users.dropIndexes()
+db.users.dropIndex('email_1')
+db.users.dropIndexes(['', ''])
+
+db.users.deleteOne({email: 'fazlay.rabbi444@gmail.com'})
+
+db.users.updateOne(
+    {email: 'fazlay.rabbi.level4.bcrypt@gmail.com'},
+    {$set: {encryptionType: 'bcrypt hash encryption + salt rounds'}}
+)
+
+
+
+
+
+
