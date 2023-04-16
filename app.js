@@ -49,53 +49,98 @@ const {passport_authentication} = require('./authentication_by_passport')
 
 passport_authentication(passport, User)
 
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "https://share-my-secrets.onrender.com/auth/google/secrets"
- },
-function(accessToken, refreshToken, profile, cb) {
-  User.findOrCreate({ googleId: profile.id, name: profile.displayName }, function (err, user) {
-    return cb(err, user);
-  })
-}
-))
+function socialAuth (){
 
-passport.use(new TwitterStrategy({
-  consumerKey: process.env.TWITTER_CONSUMER_KEY,
-  consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-  callbackURL: "https://share-my-secrets.onrender.com/auth/twitter/secrets"
-},
-function(token, tokenSecret, profile, cb) {
-  User.findOrCreate({ twitterId: profile.id, name: profile.username }, function (err, user) {
-    return cb(err, user)
-  })
-}
-))
+  passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "https://share-my-secrets.onrender.com/auth/google/secrets"
+   },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ googleId: profile.id, name: profile.displayName }, function (err, user) {
+      return cb(err, user);
+    })
+  }
+  ))
+  
+  passport.use(new TwitterStrategy({
+    consumerKey: process.env.TWITTER_CONSUMER_KEY,
+    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+    callbackURL: "https://share-my-secrets.onrender.com/auth/twitter/secrets"
+  },
+  function(token, tokenSecret, profile, cb) {
+    User.findOrCreate({ twitterId: profile.id, name: profile.username }, function (err, user) {
+      return cb(err, user)
+    })
+  }
+  ))
+  
+  passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "https://share-my-secrets.onrender.com/auth/facebook/secrets"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ facebookId: profile.id, name: profile.username }, function (err, user) {
+      return cb(err, user)
+    })
+  }
+  ))
+  
+  passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: "https://share-my-secrets.onrender.com/auth/github/secrets"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    User.findOrCreate({ githubId: profile.id, name: profile.username }, function (err, user) {
+      return done(err, user);
+    })
+  }
+  ))
 
-passport.use(new FacebookStrategy({
-  clientID: process.env.FACEBOOK_APP_ID,
-  clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: "https://share-my-secrets.onrender.com/auth/facebook/secrets"
-},
-function(accessToken, refreshToken, profile, cb) {
-  User.findOrCreate({ facebookId: profile.id, name: profile.username }, function (err, user) {
-    return cb(err, user)
-  })
-}
-))
 
-passport.use(new GitHubStrategy({
-  clientID: process.env.GITHUB_CLIENT_ID,
-  clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  callbackURL: "https://share-my-secrets.onrender.com/auth/github/secrets"
-},
-function(accessToken, refreshToken, profile, done) {
-  User.findOrCreate({ githubId: profile.id, name: profile.username }, function (err, user) {
-    return done(err, user);
-  })
+
+
+
+
+  app.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile'] }))
+
+  app.get('/auth/google/secrets', 
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    function(req, res) {
+      res.redirect('/secrets')
+    })
+
+  app.get('/auth/twitter',
+    passport.authenticate('twitter'))
+
+  app.get('/auth/twitter/secrets', 
+    passport.authenticate('twitter', { failureRedirect: '/login' }),
+    function(req, res) {
+      res.redirect('/secrets')
+    })
+
+  app.get('/auth/facebook',
+    passport.authenticate('facebook'))
+
+  app.get('/auth/facebook/secrets',
+    passport.authenticate('facebook', { failureRedirect: '/login' }),
+    function(req, res) {
+      res.redirect('/secrets')
+    })
+
+  app.get('/auth/github',
+    passport.authenticate('github', { scope: [ 'user:email' ] }))
+
+  app.get('/auth/github/secrets', 
+    passport.authenticate('github', { failureRedirect: '/login' }),
+    function(req, res) {
+      res.redirect('/secrets')
+    })
 }
-))
+socialAuth()
 
 
 
@@ -106,50 +151,6 @@ function(accessToken, refreshToken, profile, done) {
 app.get('/', (req, res) => {
   res.render('home')
 })
-
-app.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile'] })
-)
-
-app.get('/auth/google/secrets', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/secrets')
-  }
-)
-
-app.get('/auth/twitter',
-  passport.authenticate('twitter'))
-
-app.get('/auth/twitter/secrets', 
-  passport.authenticate('twitter', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/secrets')
-  })
-
-app.get('/auth/facebook',
-  passport.authenticate('facebook'))
-
-app.get('/auth/facebook/secrets',
-  passport.authenticate('facebook', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/secrets')
-  })
-
-app.get('/auth/github',
-  passport.authenticate('github', { scope: [ 'user:email' ] }))
-
-app.get('/auth/github/secrets', 
-  passport.authenticate('github', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/secrets')
-  })
-
-
-
-
-
-
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
   res.render('register')
@@ -166,8 +167,16 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
 //     res.redirect('/login')
 // })
 
-app.get('/secrets', checkAuthenticated, (req, res) => {
-  res.render('secrets')
+app.get('/secrets', checkAuthenticated, async (req, res) => {
+
+  User.find({secret: {$ne: null}})
+  .then(userArray => {
+    if(userArray) 
+      res.render('secrets', {
+        user_array: userArray
+      })
+  })
+  .catch(err => console.log(err))
 })
 
 function checkAuthenticated (req, res, next) {
@@ -182,24 +191,37 @@ function checkNotAuthenticated (req, res, next) {
   next()
 }
 
+
+
+
+
+
+
 app.delete('/logout', (req, res, next) => {
   req.logout(err => {
-    if(err)
+    if(err) 
       return next(err)
     res.redirect('/login')
   })
 })
 
-app.get('/submit', (req, res) => {
+app.get('/submit', checkAuthenticated, (req, res) => {
   res.render('submit')
 })
 
 app.post('/submit', (req, res) => {
   const secret = req.body.secret
-  res.send('<h2>'+ secret + '</h2>')
+
+  User.findById(req.user.id)
+  .then(user1 => {
+    if(user1){
+      user1.secret = secret
+      user1.save()
+      .then(() => res.redirect('/secrets'))
+      .catch(err => console.log(err))
+    }
+  })
 })
-
-
 
 app.get('/tos', (req, res) => {
   res.render('others/tos')
@@ -255,11 +277,14 @@ function passportAuth () {
     }
   })
   
-  app.post('/login', checkNotAuthenticated, passport.authenticate('local', { 
+  app.post('/login', checkNotAuthenticated, 
+  passport.authenticate('local', 
+  { 
     successRedirect: '/secrets',
     failureRedirect: '/login',
     failureFlash: true
-  }))
+  }
+  ))
 }
 passportAuth()
 

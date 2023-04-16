@@ -26,6 +26,7 @@ const userSchema = mongoose.Schema({
   facebookId: String,
   githubId: String,
   name: String,
+  secret: String,
   created: {type: Date, default: Date.now}
 })
 

@@ -1,9 +1,14 @@
 # OAuth 2.0
 Website: https://share-my-secrets.onrender.com
 
-OAuth Authentication
+1. Passport Local Mongoose - Authentication
+
+2. OAuth Authentication
 ---------------------------
-- google OAuth 2.0
+- Google OAuth 2.0
+- Twitter OAuth
+- Facebook OAuth
+- GitHub OAuth
 
 
 
